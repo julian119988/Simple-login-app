@@ -2,8 +2,7 @@ import "dotenv/config";
 import express from "express";
 import bodyParser from "body-parser";
 import { router } from "./routes";
-//@ts-ignore
-const PORT = process.env.PORT | 8080;
+const PORT = process.env.PORT || 8080;
 const app = express();
 
 // app.use(express.static(__dirname + "../public"));
