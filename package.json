@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon src/index.ts",
+    "build": "tsc",
+    "postinstall": "npm run build && cp src/views dist/ -r",
     "prod:start": "node dist"
   },
   "keywords": [],
