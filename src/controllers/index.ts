@@ -15,6 +15,7 @@ export const createNewUser = async (req: Request, res: Response) => {
     });
     res.render("loggedIn", { username });
   } catch (err) {
+    // Comment to force deploy
     console.log(err);
     res.send(err.message);
   }
