@@ -17,7 +17,7 @@ test("Testing login", async ({ page, request }) => {
   await passwordInput.type("test");
   await submitButton.click();
   const loginText = await page.$("body > main > h1");
-  expect(page.url()).toContain("/login");
+  expect(page.url()).toContain("/profile");
   expect(await loginText.innerHTML()).toContain(
     "Congratuliations you are logged in"
   );

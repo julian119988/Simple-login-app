@@ -66,7 +66,7 @@ export const loginUser = async (req: Request, res: Response) => {
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",
         })
-        .render("loggedIn", { username: user.username });
+        .redirect("/profile?username=" + user.username);
     } else {
       res.redirect("/");
     }

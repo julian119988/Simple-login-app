@@ -4,6 +4,10 @@ import { createNewUser, loginUser } from "../controllers";
 import { authorization } from "../middlewares/auth.middlewares";
 
 router.get("/", (req, res) => res.render("index"));
+router.get("/profile", authorization, (req, res) => {
+  const username = req.query.username;
+  res.render("loggedIn", { username });
+});
 
 router.post("/login", loginUser);
 router.get("/create", (req, res) => res.render("createUser"));
