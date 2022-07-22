@@ -8,7 +8,7 @@
     "start": "nodemon src/index.ts",
     "build": "tsc",
     "postinstall": "npm run build && cp src/views dist/ -r",
-    "prod:start": "node dist"
+    "prod:start": "node dist/src"
   },
   "keywords": [],
   "author": "",
