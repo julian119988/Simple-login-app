@@ -7,13 +7,13 @@ export const authorization = (
 ) => {
   const token = req.cookies.access_token;
   if (!token) {
-    return res.sendStatus(403);
+    return res.status(403).redirect("/");
   }
   try {
     const data = jwt.verify(token, process.env.SECRET);
     console.log(data);
     return next();
   } catch {
-    return res.sendStatus(403);
+    return res.status(403).redirect("/");
   }
 };
