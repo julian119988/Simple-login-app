@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, users } from "@prisma/client";
 const prisma = new PrismaClient();
+import jwt from "jsonwebtoken";
 
 export const createNewUser = async (req: Request, res: Response) => {
   try {
@@ -31,21 +32,12 @@ async function verifyUser(password: string, hashedPassword: string) {
   return await bcrypt.compare(password, hashedPassword);
 }
 
-export const getUser = async (req: Request, res: Response) => {
+export const getUserByEmail = async (req: Request, res: Response) => {
   const email = req.query.email;
   try {
     if (email && typeof email === "string") {
-      const user = await prisma.users.findFirst({
-        where: {
-          email: email,
-        },
-      });
-      console.log(user);
-      if (user) {
-        res.send(user);
-      } else {
-        res.send("No user");
-      }
+      const dbResponse = await findUserByEmail(email);
+      res.send(dbResponse);
     } else {
       res.send("No user");
     }
@@ -67,11 +59,57 @@ export const loginUser = async (req: Request, res: Response) => {
     if (!user) throw new Error("User not found");
     const isPasswordCorrect = await verifyUser(password, user.password);
     if (isPasswordCorrect) {
-      res.render("loggedIn", { username: user.username });
+      const token = jwt.sign({ user }, process.env.SECRET);
+      res
+        .cookie("access_token", token, {
+          httpOnly: false,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+        })
+        .render("loggedIn", { username: user.username });
     } else {
       res.redirect("/");
     }
   } catch (err) {
     res.send(`${err.message} <a href="/">Go back</a>`);
+  }
+};
+
+const findUserByEmail = async (email: string) => {
+  const user = await prisma.users.findFirst({
+    where: {
+      email: email,
+    },
+  });
+  if (user) {
+    return user;
+  } else {
+    return "No user";
+  }
+};
+
+const deleteUserByEmail = async (email: string) => {
+  const deletedUser = await prisma.users.delete({
+    where: {
+      email,
+    },
+  });
+  if (deletedUser)
+    return `User with email ${deletedUser.email} was deleted successfully.`;
+  return "No user with that email.";
+};
+
+export const deleteUserByEmailRequest = async (req: Request, res: Response) => {
+  const email = req.query.email;
+  try {
+    if (email && typeof email === "string") {
+      const deletedUser = await deleteUserByEmail(email);
+      res.send(deletedUser);
+    } else {
+      res.send("Error with email");
+    }
+  } catch (err) {
+    console.log(err);
+    res.send(err);
   }
 };
