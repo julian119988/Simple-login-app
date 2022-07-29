@@ -7,9 +7,12 @@
     <header><%- include('../partials/header'); %></header>
     <main>
       <div class="jumbotron">
-        <h1><%= username %></h1>
+        <h1><%= username || "username" %></h1>
       </div>
       <h1>Congratuliations you are logged in</h1>
+      <form action="/logout" method="post">
+        <button type="submit">Logout</button>
+      </form>
     </main>
     <footer><%- include('../partials/footer'); %></footer>
   </body>

@@ -5,7 +5,7 @@ test("Testing login", async ({ page, request }) => {
     data: {
       email: "test@test.com",
       password: "test",
-      username: "test",
+      username: "julian",
       password2: "test",
     },
   });
@@ -17,7 +17,7 @@ test("Testing login", async ({ page, request }) => {
   await passwordInput.type("test");
   await submitButton.click();
   const loginText = await page.$("body > main > h1");
-  expect(page.url()).toContain("/profile");
+  expect(page.url()).toContain("/protected");
   expect(await loginText.innerHTML()).toContain(
     "Congratuliations you are logged in"
   );

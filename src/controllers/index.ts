@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { PrismaClient, users } from "@prisma/client";
-const prisma = new PrismaClient();
 import jwt from "jsonwebtoken";
+import { prisma } from "../db";
 
 export const createNewUser = async (req: Request, res: Response) => {
   try {
@@ -44,34 +43,6 @@ export const getUserByEmail = async (req: Request, res: Response) => {
   } catch (err) {
     console.log(err);
     res.send(err);
-  }
-};
-
-export const loginUser = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  try {
-    if (!email || !password) throw new Error("Missing data");
-    const user = await prisma.users.findFirst({
-      where: {
-        email: email,
-      },
-    });
-    if (!user) throw new Error("User not found");
-    const isPasswordCorrect = await verifyUser(password, user.password);
-    if (isPasswordCorrect) {
-      const token = jwt.sign({ user }, process.env.SECRET);
-      res
-        .cookie("access_token", token, {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        })
-        .redirect("/profile?username=" + user.username);
-    } else {
-      res.redirect("/");
-    }
-  } catch (err) {
-    res.send(`${err.message} <a href="/">Go back</a>`);
   }
 };
 
